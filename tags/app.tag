@@ -12,8 +12,8 @@
 
 	<script>
 		var that = this;
-		this.color = ["#D74D42", "#FE9F34", "#EE742B", "#83CE8A", "#DADAAE"];
-		this.randomIndex = Math.round(Math.random() * 4)
+		this.color = ["#D74D42", "#FE9F34", "#EE742B", "#83CE8A", "#DADAAE", "#2EA7E7", "#9D4FA8","#A371C8", "#B5C3C7", "#299C2B", "#725E4F", "#F82C21"];
+		this.randomIndex = Math.round(Math.random() * (this.color.length -1));
 		this.randomColor = this.color[this.randomIndex];
 
 		this.username = '';
@@ -27,7 +27,7 @@
 					// user pressed OK, but the input field was empty
 					askName();
 				} else if (that.username) {
-					return
+					return;
 				} else {
 					// user hit cancel
 					askName();

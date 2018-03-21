@@ -37,11 +37,12 @@
 			display: inline-block;
 			background: #ddd;
 			width: 400px;
-			padding: 4px; 
+			padding: 6px; 
 			vertical-align: text-top;
 			border-radius: 4px;
 			margin-left: 10px;
 			position: relative;
+			box-sizing: border-box;
 		}
 
 		.message-content.float-none:after {
