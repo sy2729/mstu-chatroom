@@ -22,7 +22,8 @@
 
 			var askName = function() {
 				that.username = prompt("Please enter your name", );
-				
+				//--------make sure there must be a name------------//
+				var chatLog = this.refs.chatLog;
 				  if (that.username === "") {
 					// user pressed OK, but the input field was empty
 					askName();
@@ -40,13 +41,9 @@
 		})
 
 		this.on('update', function() {
+			//--------always scroll to the bottom when new messages come------------//
 			var chatLog = this.refs.chatLog;
 			chatLog.scrollTop = chatLog.scrollHeight;
-
-			// updateScroll() {
-			// 	var chatLog = this.refs.chatLog;
-			// 	chatLog.scrollTop = chatLog.scrollHeight;
-			// }
 		})
 
 
@@ -79,11 +76,12 @@
 			};
 
 			if(this.refs.messageInput.value !== '') {
-				msg.author = this.username;
-				var time = moment().format('LTS');
-				msg.time = time;
-				msg.color = this.randomColor;
-				console.log(msg.author)
+				msg.author = this.username;				//record the author
+				var time = moment().format('LTS');		
+				msg.time = time;						//record the time
+				msg.color = this.randomColor;			//record the color
+				msg.up = 0;								//record the thumbs-up
+				msg.down = 0;							//record the thumbs-down
 
 				messagesRef.push(msg);
 
@@ -97,6 +95,9 @@
 		};
 		
 	</script>
+
+
+
 
 	<style>
 		:scope {
