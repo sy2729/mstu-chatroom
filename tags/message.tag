@@ -39,8 +39,16 @@
 
 		thumbsUp(event) {
 			console.log(event.item)
-			//here in this function,
-			//how would I be able to access the 'msg.up' or 'msg.down' property that only belongs to the message that I'm clicking in
+			event.item.msg.up ++
+
+			//change the icon color
+			event.currentTarget.style.color = "green";
+		}
+		thumbsDown(event) {
+			console.log(event.item)
+			event.item.msg.down ++
+
+			event.currentTarget.style.color = "red";
 		}
 
 	</script>
