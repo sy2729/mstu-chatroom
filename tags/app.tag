@@ -35,13 +35,17 @@
 
 			}
 			askName();
-			
-			// that.username = prompt("Please enter your name", );
-			// if (that.username === "") {
-			// 	alert('Type in your name!!!')
-			// 	that.username = prompt("Please enter your name", );
-			// }else {
-			// 	that.username = prompt("Please enter your name", );
+
+
+		})
+
+		this.on('update', function() {
+			var chatLog = this.refs.chatLog;
+			chatLog.scrollTop = chatLog.scrollHeight;
+
+			// updateScroll() {
+			// 	var chatLog = this.refs.chatLog;
+			// 	chatLog.scrollTop = chatLog.scrollHeight;
 			// }
 		})
 
@@ -73,21 +77,24 @@
 			var msg = {
 				message: this.refs.messageInput.value
 			};
-			msg.author = this.username;
-			var time = moment().format('LTS');
-			msg.time = time;
-			msg.color = this.randomColor;
-			console.log(msg.author)
 
-			messagesRef.push(msg);
+			if(this.refs.messageInput.value !== '') {
+				msg.author = this.username;
+				var time = moment().format('LTS');
+				msg.time = time;
+				msg.color = this.randomColor;
+				console.log(msg.author)
 
-			this.clearInput();
+				messagesRef.push(msg);
+
+				this.clearInput();
+			}
 		}
 
 		clearInput(e) {
 			this.refs.messageInput.value = "";
 			this.refs.messageInput.focus();
-		}
+		};
 		
 	</script>
 
