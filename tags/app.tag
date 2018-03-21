@@ -23,7 +23,6 @@
 			var askName = function() {
 				that.username = prompt("Please enter your name", );
 				//--------make sure there must be a name------------//
-				var chatLog = this.refs.chatLog;
 				  if (that.username === "") {
 					// user pressed OK, but the input field was empty
 					askName();
