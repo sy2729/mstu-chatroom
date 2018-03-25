@@ -7,14 +7,19 @@
 				<br>
 				<span class="time">{msg.time}</span>
 				<div class="status" show= {showStatus}>
-					<span class="up">
-						<i class="fa fa-thumbs-o-up" onclick={thumbsUp}></i>
-						{msg.up}
-					</span>
-					<span class="down">
-						<i class="fa fa-thumbs-o-down" onclick={thumbsDown}></i>
-						 {msg.down}
-					</span>
+					<div class="status-inner-wrapper">
+						<span class="up">
+							<i class="fa fa-thumbs-o-up" onclick={thumbsUp}></i>
+							{msg.up}
+						</span>
+						<span class="down">
+							<i class="fa fa-thumbs-o-down" onclick={thumbsDown}></i>
+							 {msg.down}
+						</span>
+						<span class="delete">
+							<i class="fa fa-trash-o" onclick={delete}></i>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -34,21 +39,41 @@
 			this.refs.messageWrap.addEventListener('mouseout', function(event) {
 				event.currentTarget.childNodes[3].childNodes[5].style.display = "none";
 			})
+
+			var messageWraps = document.querySelectorAll('.message-wrap');
+			var lastMessage = messageWraps[messageWraps.length -1]
+			lastMessage.style.marginBottom = 50+'px';
 		})
 
 
-		thumbsUp(event) {
-			console.log(event.item)
-			event.item.msg.up ++
+		thumbsUp(e) {
+			id = e.item.msg.id;
+			
+			messagesRef.child(id).child('up').set(e.item.msg.up++);
+
+
+// anyway, fail to get the data and addup by 1------------, will solve next time
+			// messagesRef.child(id).child('up').once('value', function(e) {
+			// 	console.log(e.val());
+			// 	var preUp = e.val();
+			// 	messagesRef.child(id).child('up').set(preUp+1);
+			// })
+
 
 			//change the icon color
-			event.currentTarget.style.color = "green";
+			e.currentTarget.style.color = "green";
 		}
-		thumbsDown(event) {
-			console.log(event.item)
-			event.item.msg.down ++
+		thumbsDown(e) {
+			id = e.item.msg.id;
+			var preDown = messagesRef.child(id).child('up');
+			messagesRef.child(id).child('down').set(e.item.msg.down++);
 
-			event.currentTarget.style.color = "red";
+			e.currentTarget.style.color = "red";
+		}
+		delete(e) {
+			this.parent.deletingMessage = true;
+			var id = e.item.msg.id;
+			messagesRef.child(id).remove();
 		}
 
 	</script>
@@ -70,20 +95,23 @@
 		}
 
 		.time {
-			/* float: right; */
+			position: absolute;
+			bottom: -12px;
+			color: #AAAAAB;
 			font-size: 10px;
 		}
 
 		.message-content {
 			display: inline-block;
-			background: #ddd;
-			width: 400px;
-			padding: 6px; 
+			background: #EBEBEB;
+			padding: 6px 40px 6px 6px;
 			vertical-align: text-top;
 			border-radius: 4px;
 			margin-left: 10px;
 			position: relative;
 			box-sizing: border-box;
+			color: #273138;
+			max-width: 400px;
 		}
 
 		.message-content.float-none:after {
@@ -94,9 +122,14 @@
 			width: 0px;
 			height: 0px;
 			border: 10px solid transparent;
-			border-top-color: #ddd;
+			border-top-color: #EBEBEB;
 			border-radius: 0px;
 			transform: rotate(23deg);
+		}
+
+		.message-content.float-left {
+			background-color: #426687;
+			color: #F2F4F7;
 		}
 
 		.message-content.float-left:after {
@@ -108,9 +141,14 @@
 			height: 0px;
 			display: block;
 			border: 10px solid transparent;
-			border-top-color: #ddd;
+			border-top-color: #426687;;
 			border-radius: 0px;
 			transform: rotate(-23deg);
+		}
+
+		.message-content.float-left .status {
+			left: -30px;
+			color: #273138;
 		}
 
 		.float-left {
@@ -130,12 +168,17 @@
 
 		.status {
 			position: absolute;
-			right: 10px;
-    		top: 35%;
+			right: -30px;
+    		top: 7px;
 
 		}
 
-		.down i, .up i {
+		.status-inner-wrapper {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.down i, .up i, .delete i {
 			cursor: pointer;
 		}
 	</style>

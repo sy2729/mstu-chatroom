@@ -1,20 +1,30 @@
 <app>
 
-	<h1>Welcome to MSTU Chat!</h1>
+	<div class="wrapper">
+		
+		<div class="chatLog" ref="chatLog">
+			<div class="chatHeading">
+				<h3>Welcome to MSTU Chat!</h3>
+			</div>
+			<!-- Messages go here: -->
+			<message each={ msg in chatLog }></message>
+		</div>
+		<div class="animationBox">
 
-	<div class="chatLog" ref="chatLog">
-		<!-- Messages go here: -->
-		<message each={ msg in chatLog }></message>
+		</div>
+		<div class="bottom">
+			<span class="user" style={"background: " + randomColor +";"}>{this.username || test}</span>
+			<input type="text" ref="messageInput" onkeypress={ sendMsg } placeholder="Enter Message">
+			<button type="button" onclick={ sendMsg } class="send">SEND</button>
+		</div>
 	</div>
-	<span class="user" style={"background: " + randomColor +";"}>{this.username || test}</span>
-	<input type="text" ref="messageInput" onkeypress={ sendMsg } placeholder="Enter Message">
-	<button type="button" onclick={ sendMsg } class="send">SEND</button>
-
 	<script>
 		var that = this;
 		this.color = ["#D74D42", "#FE9F34", "#EE742B", "#83CE8A", "#DADAAE", "#2EA7E7", "#9D4FA8","#A371C8", "#B5C3C7", "#299C2B", "#725E4F", "#F82C21"];
 		this.randomIndex = Math.round(Math.random() * (this.color.length -1));
 		this.randomColor = this.color[this.randomIndex];
+
+		this.deletingMessage = false;
 
 		this.username = '';
 
@@ -41,8 +51,11 @@
 
 		this.on('update', function() {
 			//--------always scroll to the bottom when new messages come------------//
-			var chatLog = this.refs.chatLog;
-			chatLog.scrollTop = chatLog.scrollHeight;
+			if(!that.deletingMessage) {
+				var chatLog = this.refs.chatLog;
+				chatLog.scrollTop = chatLog.scrollHeight;
+			}
+			that.deletingMessage = false;
 		})
 
 
@@ -52,15 +65,58 @@
 			// { message: "Hello" }, { message: "Hola" }, { message: "Konnichiwa" }
 		];
 
-		messagesRef.on('value', function(snapshot) {
-			var data = snapshot.val();
-			that.chatLog = [];
-			for(key in data) {
-				that.chatLog.push(data[key]);
+
+		//-<<<<<<<<<-[[[[[[ method1 ]]]]]-->>>>>>>--------obtain data all in once
+		// messagesRef.on('value', function(snapshot) {
+		// 	var data = snapshot.val();
+		// 	that.chatLog = [];
+		// 	for(key in data) {
+		// 		that.chatLog.push(data[key]);
+		// 	}
+
+		// 	that.update();
+		// })
+
+
+		//-<<<<<<<<<-[[[[[[ method2 ]]]]]-->>>>>>>--------obtain data one by one
+		messagesRef.on('child_added', function(e) {
+			var data = e.val();
+			var id = e.key;
+			data.id = id;
+			that.chatLog.push(data);
+			that.update();
+		})
+
+		messagesRef.on('child_removed', function (e) {
+			var id = e.key;
+
+			var target;
+			for (let i = 0; i < that.chatLog.length; i++) {
+				if (that.chatLog[i].id === id) {
+					target = that.chatLog[i];
+					break
+				}
 			}
+			var index = that.chatLog.indexOf(target);
+			that.chatLog.splice(index, 1);
 
 			that.update();
 		})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		sendMsg(e) {
 			if (e.type == "keypress" && e.key !== "Enter") {
@@ -86,6 +142,13 @@
 
 				this.clearInput();
 			}
+
+			var animateBox = document.querySelector('.animationBox');
+			animateBox.classList.add('activate');
+			setTimeout(function() {
+				animateBox.classList.remove('activate');
+			}, 500);
+
 		}
 
 		clearInput(e) {
@@ -105,29 +168,82 @@
 			font-size: 1em;
 		}
 
-		h1 {
+		.chatHeading {
+			background: #273138;
+			color: #CFD1D2;
+			padding: 17.5px 0;
+			position: sticky;
+			top: 0;
+			z-index: 10;
 			text-align: center;
 		}
 
-		.chatLog {
-			border: 1px solid grey;
-			padding: 1em;
-			margin-bottom: 1em;
-			height: 500px;
-			overflow: auto;
+		.wrapper {
+			width: 85%;
+			margin: 0 auto;
+			position: relative;
 		}
+
+		.bottom {
+			background: #FFFFFF;
+			display: flex;
+			position: relative;
+			z-index: 10;
+		}
+
+		.chatLog {
+			/* padding: 1em; */
+			margin-bottom: 3px;
+			height: 550px;
+			overflow: auto;
+			position: relative;
+			background: #FFFFFF;
+		}
+
+		.animationBox {
+			width: 100%;
+			height: 36px;
+			background-color: #426687;
+			right: 0;
+			position: absolute;
+			bottom: 10px;
+			z-index: 9;
+		}
+
+		.animationBox.activate {
+			animation: sending .4s ease-in-out;
+		}
+
+		@keyframes sending {
+			from {
+				bottom: 10px;	
+				width: 100%;
+			}
+			to {
+				bottom: 100px;
+    			width: 30%;
+    			right: 0;
+				opacity: 0;
+				background-color: #426687;
+			}
+		}
+
+		button {
+			color: #88C3E8;
+		}
+
 		[ref="messageInput"], button {
 			font-size: 1em;
 			padding: 0.5em;
 		}
 		[ref="messageInput"] {
 			width: 70%;
+			flex: 1;
 		}
 
 		.send {
 			padding: 0.5em 2em;
 			background: transparent;
-			border-radius: 4px;
 			transition: all .4s;
 			cursor: pointer;
 		}
@@ -140,7 +256,7 @@
 			display: inline-block;
 			background: #F9C968;
 			padding: 4px 10px;
-			border-radius: 2px;
+			line-height: 38px;
 		}
 	</style>
 </app>
