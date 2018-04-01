@@ -103,7 +103,7 @@
 
 		.message-content {
 			display: inline-block;
-			background: #EBEBEB;
+			background: #FFFFFF;
 			padding: 6px 40px 6px 6px;
 			vertical-align: text-top;
 			border-radius: 4px;
@@ -122,14 +122,13 @@
 			width: 0px;
 			height: 0px;
 			border: 10px solid transparent;
-			border-top-color: #EBEBEB;
+			border-top-color: #FFFFFF;
 			border-radius: 0px;
 			transform: rotate(23deg);
 		}
 
 		.message-content.float-left {
-			background-color: #426687;
-			color: #F2F4F7;
+			background-color: #A5E369;
 		}
 
 		.message-content.float-left:after {
@@ -141,7 +140,7 @@
 			height: 0px;
 			display: block;
 			border: 10px solid transparent;
-			border-top-color: #426687;;
+			border-top-color: #A5E369;;
 			border-radius: 0px;
 			transform: rotate(-23deg);
 		}

@@ -1,32 +1,43 @@
 <app>
 
-	<div class="wrapper">
-		
-		<div class="chatLog" ref="chatLog">
-			<div class="chatHeading">
-				<h3>Welcome to MSTU Chat!</h3>
-			</div>
-			<!-- Messages go here: -->
-			<message each={ msg in chatLog }></message>
-		</div>
-		<div class="animationBox">
+	<addRoom if={addActive}></addRoom>
 
+	<div class="wrapper">
+		<div class="contact">
+			<div class="navbar">
+				<input type="text" placeholder="Search" class="search">
+				<button class="addRoom" onclick={addRoom}>+</button>
+			</div>
+			<div each={i in chatGroup} class="chatGroup" onclick={changeRoom} id={groupHighlight: i.roomKey === currentRoom.roomKey}>{ i.roomName }</div>
 		</div>
-		<div class="bottom">
-			<span class="user" style={"background: " + randomColor +";"}>{this.username || test}</span>
-			<input type="text" ref="messageInput" onkeypress={ sendMsg } placeholder="Enter Message">
-			<button type="button" onclick={ sendMsg } class="send">SEND</button>
+		<div class="chat-wrap">
+			<div class="chatLog" ref="chatLog">
+				<div class="chatHeading">
+					<h3>{currentRoom.roomName}</h3>
+				</div>
+				<!-- Messages go here: -->
+				<message each={ msg in currentRoom.message }></message>
+			</div>
+			<div class="animationBox">
+	
+			</div>
+			<div class="bottom">
+				<span class="user" style={"background: " + randomColor +";"}>{this.username || test}</span>
+				<input type="text" ref="messageInput" onkeypress={ sendMsg } placeholder="Enter Message">
+				<button type="button" onclick={ sendMsg } class="send">SEND</button>
+			</div>
 		</div>
 	</div>
 	<script>
 		var that = this;
+		this.addActive = false;
 		this.color = ["#D74D42", "#FE9F34", "#EE742B", "#83CE8A", "#DADAAE", "#2EA7E7", "#9D4FA8","#A371C8", "#B5C3C7", "#299C2B", "#725E4F", "#F82C21"];
 		this.randomIndex = Math.round(Math.random() * (this.color.length -1));
 		this.randomColor = this.color[this.randomIndex];
-
 		this.deletingMessage = false;
-
 		this.username = '';
+		this.chatGroup = [];
+		this.currentRoom = '';
 
 		this.on('mount', function () {
 
@@ -61,9 +72,7 @@
 
 
 		// Demonstration Data
-		this.chatLog = [
-			// { message: "Hello" }, { message: "Hola" }, { message: "Konnichiwa" }
-		];
+		this.chatLog = [];
 
 
 		//-<<<<<<<<<-[[[[[[ method1 ]]]]]-->>>>>>>--------obtain data all in once
@@ -79,13 +88,34 @@
 
 
 		//-<<<<<<<<<-[[[[[[ method2 ]]]]]-->>>>>>>--------obtain data one by one
-		messagesRef.on('child_added', function(e) {
-			var data = e.val();
-			var id = e.key;
-			data.id = id;
-			that.chatLog.push(data);
+		messagesRef.on('value', function(e) {
+			var roomData = e.val();
+			that.chatGroup  = [];
+			for(roomName in roomData) {
+				that.chatGroup.push(roomData[roomName])
+			}
+
+			console.log(that.chatGroup)
+
+			if(that.currentRoom === '') {
+				that.currentRoom = that.chatGroup[0];
+			}else{
+
+			}
+
 			that.update();
 		})
+
+			// messagesRef.child(that.currentRoom).on('child_added', function(e) {
+			// 	var data = e.val();
+			// 	// console.log(e.val());
+			// 	var id = e.key;
+			// 	data.id = id;
+			// 	console.log(data)
+			// 	that.chatLog.push(data);
+			// 	that.update();
+			// })
+
 
 		messagesRef.on('child_removed', function (e) {
 			var id = e.key;
@@ -137,8 +167,9 @@
 				msg.color = this.randomColor;			//record the color
 				msg.up = 0;								//record the thumbs-up
 				msg.down = 0;							//record the thumbs-down
+				msg.room = this.currentRoom;
 
-				messagesRef.push(msg);
+				messagesRef.child(this.currentRoom.roomKey).child('message').push(msg);
 
 				this.clearInput();
 			}
@@ -155,6 +186,16 @@
 			this.refs.messageInput.value = "";
 			this.refs.messageInput.focus();
 		};
+
+		addRoom() {
+			// this.currentRoom = 
+			this.addActive = true;
+		}
+
+		changeRoom(e) {
+			this.currentRoom = e.item.i;
+			this.update();
+		}
 		
 	</script>
 
@@ -169,19 +210,56 @@
 		}
 
 		.chatHeading {
-			background: #273138;
-			color: #CFD1D2;
+			background: #F3F3F3;
+			color: #25395A;
 			padding: 17.5px 0;
 			position: sticky;
 			top: 0;
 			z-index: 10;
 			text-align: center;
+			border-bottom: 1px solid #E2E2E2;
 		}
 
 		.wrapper {
 			width: 85%;
+			max-width: 1000px;
 			margin: 0 auto;
 			position: relative;
+			box-shadow: 2px 1px 20px 2px rgba(0, 0, 0, 0.5);
+			display: flex;
+			border-radius: 5px;
+			height: 600px;
+			min-width: 700px;
+		}
+
+		.chat-wrap {
+			position: relative;
+			flex: 1;
+		}
+
+		.navbar {
+			display: flex;
+			/* justify-content: space-around; */
+			padding: 10px 12px;
+			box-sizing: border-box;
+		}
+
+		.navbar .search {
+			flex: 1;
+			background: #E4E4E4;
+			border: none;
+			border-radius: 4px;
+			margin-right: 5px;
+		}
+
+		.navbar .addRoom {
+			padding: 5px 4px;
+			border-radius: 2px;
+			color: #7F7F7F;
+		}
+
+		.navbar .addRoom:focus {
+			outline: none;
 		}
 
 		.bottom {
@@ -197,7 +275,7 @@
 			height: 550px;
 			overflow: auto;
 			position: relative;
-			background: #FFFFFF;
+			background: #F3F3F3;
 		}
 
 		.animationBox {
@@ -228,10 +306,6 @@
 			}
 		}
 
-		button {
-			color: #88C3E8;
-		}
-
 		[ref="messageInput"], button {
 			font-size: 1em;
 			padding: 0.5em;
@@ -257,6 +331,26 @@
 			background: #F9C968;
 			padding: 4px 10px;
 			line-height: 38px;
+		}
+
+		.contact {
+			width: 30%;
+			height: 100%;
+			overflow: auto;
+		}
+
+		.chatGroup {
+			height: 60px;
+			border-bottom: 1px solid #ECECEC;
+			cursor: pointer;
+		}
+
+		.chatGroup:hover {
+			background: #FAFAFA;
+		}
+
+		#groupHighlight {
+			background: #EFEFEF;
 		}
 	</style>
 </app>

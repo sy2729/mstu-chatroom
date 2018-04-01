@@ -9,10 +9,24 @@
 		<style>
 		h1,h2,h3,h4,h5,h6 {padding: 0;margin: 0;}
 		body {
-			background-image: linear-gradient(to left bottom, #1c5f4d, #115752, #164e52, #20444e, #283b45);
+			background-image: #ddd;
 		}
 		* {
 			font-family: Helvetica, sans-serif;
+		}
+
+		input:focus {
+			outline: none;
+		}
+
+		button {
+			color: #222;
+			cursor: pointer;
+		}
+
+		button:focus {
+			outline: none;
+			
 		}
 		</style>
 	</head>
@@ -21,6 +35,7 @@
 
 	<script src="tags/app.tag" type="riot/tag"></script>
 	<script src="tags/message.tag" type="riot/tag"></script>
+	<script src="tags/addRoom.tag" type="riot/tag"></script>
 
 	<!-- I saved the libraries locally, so as not to hit the CDN fetch limit during testing. -->
 	<script src="js/riot+compiler.js"></script>
