@@ -6,7 +6,7 @@
     
     <div class="login">
       <figure class="logPic">
-        <img src="http://via.placeholder.com/235x235" alt="">
+        <img src="../wechat.png" alt="">
       </figure>
 
       <p class="title">
@@ -140,7 +140,7 @@
       padding: 0;
       border-radius: 50%;
       border: none;
-      background: #F43D6A;
+      background: #5AC045;
     }
     
     .main > .login > .signIn.loading:after {
