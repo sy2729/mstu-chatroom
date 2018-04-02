@@ -1,70 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>MSTU CHAT!</title>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<style>
-		h1,h2,h3,h4,h5,h6 {padding: 0;margin: 0;}
-		body {
-			background-image: #ddd;
-		}
-		* {
-			font-family: Helvetica, sans-serif;
-		}
 
-		input:focus {
-			outline: none;
-		}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MSTU CHAT!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            padding: 0;
+            margin: 0;
+        }
 
-		button {
-			color: #222;
-			cursor: pointer;
-		}
+        body {
+            /* background: #aaa; */
+            font-family: Helvetica Neue, Helvetica, Hiragino Sans GB, Microsoft YaHei;
+        }
 
-		button:focus {
-			outline: none;
-			
-		}
-		</style>
-	</head>
+        * {
+            font-family: Helvetica, sans-serif;
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+        button {
+            color: #222;
+            cursor: pointer;
+        }
+
+        button:focus {
+            outline: none;
+
+        }
+    </style>
+</head>
+
 <body>
-	<app></app>
+    <app></app>
 
-	<script src="tags/app.tag" type="riot/tag"></script>
-	<script src="tags/message.tag" type="riot/tag"></script>
-	<script src="tags/addRoom.tag" type="riot/tag"></script>
+    <script src="tags/app.tag" type="riot/tag"></script>
+    <script src="tags/message.tag" type="riot/tag"></script>
+    <script src="tags/addRoom.tag" type="riot/tag"></script>
+    <script src="tags/beforeLogin.tag" type="riot/tag"></script>
 
-	<!-- I saved the libraries locally, so as not to hit the CDN fetch limit during testing. -->
-	<script src="js/riot+compiler.js"></script>
-	<script src="js/firebase.js"></script>
-	<script src="js/moment.js"></script>
-	<!-- <script src="js/utilities.js"></script> -->
+    <!-- I saved the libraries locally, so as not to hit the CDN fetch limit during testing. -->
+    <script src="js/riot+compiler.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/moment.js"></script>
+    <!-- <script src="js/utilities.js"></script> -->
 
-	<script>
-	  // Initialize Firebase
-		var config = {
-			apiKey: "AIzaSyDSB_NAOipKSoFJ4XzgT4QNMOIvKPo79t0",
-			authDomain: "todolist-f59af.firebaseapp.com",
-			databaseURL: "https://todolist-f59af.firebaseio.com",
-			projectId: "todolist-f59af",
-			storageBucket: "todolist-f59af.appspot.com",
-			messagingSenderId: "228377112675"
-		};
-		firebase.initializeApp(config);
-
-
-	  var database = firebase.database();
-	  var messagesRef = database.ref('/chatroom');
-
-		// Global Cached -> Most useful Firebase refs accessible anywhere.
-		// HERE
-
-		// Initialize Riot
-		riot.mount('*');
-
-	</script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDSB_NAOipKSoFJ4XzgT4QNMOIvKPo79t0",
+            authDomain: "todolist-f59af.firebaseapp.com",
+            databaseURL: "https://todolist-f59af.firebaseio.com",
+            projectId: "todolist-f59af",
+            storageBucket: "todolist-f59af.appspot.com",
+            messagingSenderId: "228377112675"
+        };
+        firebase.initializeApp(config);
+        var database = firebase.database();
+        var messagesRef = database.ref('/chatroom');
+        // Global Cached -> Most useful Firebase refs accessible anywhere.
+        // HERE
+        // Initialize Riot
+        riot.mount('*');
+    </script>
+    <script src="https://apis.google.com/js/platform.js" async defer>
+    </script>
 </body>
+
 </html>
