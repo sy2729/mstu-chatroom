@@ -1,19 +1,42 @@
 <app>
 
+	<h2 style="text-align:center; margin: 15px 0;">Welcome to a MSTU ChatRoom</h2>
+
 	<addRoom if={addActive}></addRoom>
 
 	<div class="wrapper">
+		<div class="user-panel">
+			<div class="window-tool">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
 		<div class="contact">
 			<div class="navbar">
-				<input type="text" placeholder="Search" class="search">
+				<input type="text" placeholder="Search" class="search" onkeyup ={searchTriggered} ref = "search">
 				<button class="addRoom" onclick={addRoom}>+</button>
 			</div>
-			<div each={i in chatGroup} class="chatGroup" onclick={changeRoom} id={groupHighlight: i.roomKey === currentRoom.roomKey}>{ i.roomName }</div>
+			<div class="chatGroup-wrap">
+				<div each={i in chatGroup} class="chatGroup" onclick={changeRoom} id={groupHighlight: i.roomKey === currentRoom.roomKey} ref = 'chatGroup'>
+					<div class="groupProfile">
+						<img src="http://via.placeholder.com/40x40" alt="profile">
+					</div>
+					<div class="headingWrap">
+						<span>
+							{ i.roomName }
+						</span>
+						<span class="groupMessage-preview">
+							{ i.message? i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].message:undefined || 'no messages for now'}
+						</span>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="chat-wrap">
 			<div class="chatLog" ref="chatLog">
 				<div class="chatHeading">
-					<h3>{currentRoom.roomName}</h3>
+					<h3 class="roomName">{currentRoom.roomName}</h3>
 				</div>
 				<!-- Messages go here: -->
 				<message each={ msg in currentRoom.message }></message>
@@ -57,7 +80,6 @@
 			}
 			askName();
 
-
 		})
 
 		this.on('update', function() {
@@ -94,15 +116,13 @@
 			for(roomName in roomData) {
 				that.chatGroup.push(roomData[roomName])
 			}
-
-			console.log(that.chatGroup)
-
 			if(that.currentRoom === '') {
 				that.currentRoom = that.chatGroup[0];
 			}else{
-
+				that.currentRoom = that.chatGroup.find(function(each){
+					return each.roomKey === that.currentRoom.roomKey;
+				})
 			}
-
 			that.update();
 		})
 
@@ -116,34 +136,21 @@
 			// 	that.update();
 			// })
 
+			// messagesRef.child(that.currentRoom.roomKey).on('child_removed', function (e) {
+			// 	var id = e.key;
 
-		messagesRef.on('child_removed', function (e) {
-			var id = e.key;
+			// 	var target;
+			// 	for (let i = 0; i < that.chatLog.length; i++) {
+			// 		if (that.chatLog[i].id === id) {
+			// 			target = that.chatLog[i];
+			// 			break
+			// 		}
+			// 	}
+			// 	var index = that.chatLog.indexOf(target);
+			// 	that.chatLog.splice(index, 1);
 
-			var target;
-			for (let i = 0; i < that.chatLog.length; i++) {
-				if (that.chatLog[i].id === id) {
-					target = that.chatLog[i];
-					break
-				}
-			}
-			var index = that.chatLog.indexOf(target);
-			that.chatLog.splice(index, 1);
-
-			that.update();
-		})
-
-
-
-
-
-
-
-
-
-
-
-
+			// 	that.update();
+			// })
 
 
 
@@ -154,26 +161,24 @@
 				return false; // Short-circuits function (function exits here, does not continue.)
 			}
 
-			
-
 			var msg = {
 				message: this.refs.messageInput.value
 			};
 
 			if(this.refs.messageInput.value !== '') {
+
+				var id = messagesRef.child(this.currentRoom.roomKey).child('message').push().key;
 				msg.author = this.username;				//record the author
 				var time = moment().format('LTS');		
 				msg.time = time;						//record the time
 				msg.color = this.randomColor;			//record the color
 				msg.up = 0;								//record the thumbs-up
 				msg.down = 0;							//record the thumbs-down
-				msg.room = this.currentRoom;
+				msg.id = id;
 
-				messagesRef.child(this.currentRoom.roomKey).child('message').push(msg);
-
+				messagesRef.child(this.currentRoom.roomKey).child('message').child(id).set(msg);
 				this.clearInput();
 			}
-
 			var animateBox = document.querySelector('.animationBox');
 			animateBox.classList.add('activate');
 			setTimeout(function() {
@@ -196,6 +201,19 @@
 			this.currentRoom = e.item.i;
 			this.update();
 		}
+
+		searchTriggered(e) {
+			var filter = this.refs.search.value.toUpperCase();
+
+			for(let i = 0; i < this.chatGroup.length; i++) {
+				if(this.chatGroup[i].roomName.toUpperCase().indexOf(filter) > -1) {
+					that.refs.chatGroup[i].style.display = '';
+				}else {
+					that.refs.chatGroup[i].style.display = 'none';
+				}
+			}
+			that.update();
+		}
 		
 	</script>
 
@@ -212,12 +230,14 @@
 		.chatHeading {
 			background: #F3F3F3;
 			color: #25395A;
-			padding: 17.5px 0;
 			position: sticky;
 			top: 0;
 			z-index: 10;
 			text-align: center;
 			border-bottom: 1px solid #E2E2E2;
+			box-sizing: border-box;
+			height: 49px;
+			line-height: 49px;
 		}
 
 		.wrapper {
@@ -225,9 +245,8 @@
 			max-width: 1000px;
 			margin: 0 auto;
 			position: relative;
-			box-shadow: 2px 1px 20px 2px rgba(0, 0, 0, 0.5);
+			box-shadow: 0px 5px 14px 1px rgba(0, 0, 0, 0.5);
 			display: flex;
-			border-radius: 5px;
 			height: 600px;
 			min-width: 700px;
 		}
@@ -336,13 +355,17 @@
 		.contact {
 			width: 30%;
 			height: 100%;
-			overflow: auto;
+			overflow: hidden;
 		}
 
 		.chatGroup {
 			height: 60px;
 			border-bottom: 1px solid #ECECEC;
 			cursor: pointer;
+			display: flex;
+			box-sizing: border-box;
+			padding: 10px;
+			align-items: center;
 		}
 
 		.chatGroup:hover {
@@ -351,6 +374,62 @@
 
 		#groupHighlight {
 			background: #EFEFEF;
+		}
+
+		.chatGroup-wrap {
+			overflow: auto;
+			height: 90%;
+		}
+
+		.groupProfile img{
+			border-radius: 5px;
+		}
+
+		.roomName {
+			text-align: left;
+			text-indent: 27px;
+			font-weight: 400;
+		}
+
+		.headingWrap {
+			margin-left: 20px;
+		}
+		.headingWrap span{
+			display: block;
+		}
+
+		.groupMessage-preview {
+			font-size: 0.8em;
+			color: #B7B2B2;
+		}
+
+		.user-panel {
+			width: 70px;
+			height: 100%;
+			background: #262626;
+		}
+
+		.window-tool {
+			display: flex;
+			justify-content: space-around;
+
+		}
+
+		.window-tool span {
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			margin-top: 16px;
+		}
+		.window-tool span:nth-child(1) {
+			background: #FC625E;
+		}
+		.window-tool span:nth-child(2) {
+			background: #FEBE4A;
+		}
+		.window-tool span:nth-child(3) {
+			background: #3ECB51;
 		}
 	</style>
 </app>

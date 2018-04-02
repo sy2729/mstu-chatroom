@@ -45,7 +45,7 @@
 
     .card {
       position: fixed;
-      width: 350px;
+      width: 280px;
       height: 200px;
       left: 0;
       right: 0;
@@ -65,7 +65,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-around;
       
     }
 

@@ -73,7 +73,7 @@
 		delete(e) {
 			this.parent.deletingMessage = true;
 			var id = e.item.msg.id;
-			messagesRef.child(id).remove();
+			messagesRef.child(this.parent.currentRoom.roomKey).child('message').child(id).remove();
 		}
 
 	</script>
