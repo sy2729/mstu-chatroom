@@ -55,9 +55,9 @@
 
 
 		thumbsUp(e) {
-			id = e.item.msg.id;
-			
-			messagesRef.child(id).child('up').set(e.item.msg.up++);
+			var id = e.item.msg.id;			
+			var roomId = this.parent.currentRoom.roomKey;
+			messagesRef.child(roomId).child('message').child(id).child('up').set(e.item.msg.up++);
 
 
 // anyway, fail to get the data and addup by 1------------, will solve next time
@@ -67,21 +67,22 @@
 			// 	messagesRef.child(id).child('up').set(preUp+1);
 			// })
 
-
 			//change the icon color
 			e.currentTarget.style.color = "green";
 		}
 		thumbsDown(e) {
-			id = e.item.msg.id;
-			var preDown = messagesRef.child(id).child('up');
-			messagesRef.child(id).child('down').set(e.item.msg.down++);
+			var id = e.item.msg.id;
+			var roomId = this.parent.currentRoom.roomKey;
+			messagesRef.child(roomId).child('message').child(id).child('down').set(e.item.msg.down++);
 
 			e.currentTarget.style.color = "red";
 		}
+
 		delete(e) {
 			this.parent.deletingMessage = true;
 			var id = e.item.msg.id;
-			messagesRef.child(this.parent.currentRoom.roomKey).child('message').child(id).remove();
+			var roomId = this.parent.currentRoom.roomKey;
+			messagesRef.child(roomId).child('message').child(id).remove();
 		}
 
 	</script>

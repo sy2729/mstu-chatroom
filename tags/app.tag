@@ -16,9 +16,9 @@
 				<div class="user-profile">
 					<img src={user.photoURL} alt="user-profile">
 				</div>
-				<button class="logOut" onclick={logOut}>
-					LogOut
-				</button>
+				<div class="logOut" onclick={logOut}>
+					<i class="fa fa-sign-out"></i>
+				</div>
 			</div>
 			<div class="contact">
 				<div class="navbar">
@@ -35,7 +35,7 @@
 								{ i.roomName }
 							</span>
 							<span class="groupMessage-preview">
-								{ i.message? i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].author +` : ` + i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].message:undefined || 'no messages for now'}
+								{ i.message? i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].author +` : ` + i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].message:undefined || 'no messages'}
 							</span>
 						</div>
 					</div>
@@ -66,9 +66,7 @@
 		this.deletingMessage = false;
 		this.chatGroup = [];
 		this.currentRoom = '';
-
 		this.user = false;
-
 
 		// this.on('mount', function () {
 
@@ -90,16 +88,16 @@
 
 		// })
 
+
 		this.on('update', function() {
 			//--------always scroll to the bottom when new messages come------------//
-
-			if(!!!that.user) {
 				if(!that.deletingMessage) {
-					var chatLog = this.refs.chatLog;
-					chatLog.scrollTop = chatLog.scrollHeight;
+					if(that.refs.chatLog !== undefined) {
+						var chatLog = that.refs.chatLog;
+						chatLog.scrollTop = chatLog.scrollHeight;
+					}
 				}
 				that.deletingMessage = false;
-			}
 		})
 
 
@@ -139,7 +137,6 @@
 					})
 				}
 				that.update();
-				console.log(that.user)
 			})
 		
 		})
@@ -247,7 +244,7 @@
 
 		firebase.auth().onAuthStateChanged(function (userObj) {
 			that.user = firebase.auth().currentUser;
-			that.parent.update();
+			that.update();
 		})
 
 	</script>
@@ -451,6 +448,7 @@
 			width: 70px;
 			height: 100%;
 			background: #262626;
+			position: relative;
 		}
 
 		.window-tool {
@@ -485,6 +483,20 @@
 
 		.user-profile img {
 			width: 100%;
+		}
+
+		.logOut {
+			position: absolute;
+			bottom: 10px;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			width: 30px;
+			cursor: pointer;
+		}
+		.logOut i{
+			color: #fff;
+			font-size: 2em;
 		}
 	</style>
 </app>
