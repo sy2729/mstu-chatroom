@@ -1,6 +1,7 @@
 <app>
-	<beforeLogin if = { !user }></beforeLogin>
-	<div class="main" if = { user }>
+
+	<beforeLogin if = { !!!user }></beforeLogin>
+	<div class="main" if = { !!user }>
 		<h2 style="text-align:center; margin: 15px 0;">Welcome to a MSTU ChatRoom</h2>
 	
 		<addRoom if={addActive}></addRoom>
@@ -12,6 +13,12 @@
 					<span></span>
 					<span></span>
 				</div>
+				<div class="user-profile">
+					<img src={user.photoURL} alt="user-profile">
+				</div>
+				<button class="logOut" onclick={logOut}>
+					LogOut
+				</button>
 			</div>
 			<div class="contact">
 				<div class="navbar">
@@ -46,7 +53,7 @@
 		
 				</div>
 				<div class="bottom">
-					<span class="user" style={"background: " + randomColor +";"}>{this.username || test}</span>
+					<span class="user"}>{this.user.displayName || test}</span>
 					<input type="text" ref="messageInput" onkeypress={ sendMsg } placeholder="Enter Message">
 					<button type="button" onclick={ sendMsg } class="send">SEND</button>
 				</div>
@@ -56,11 +63,7 @@
 	<script>
 		var that = this;
 		this.addActive = false;
-		this.color = ["#D74D42", "#FE9F34", "#EE742B", "#83CE8A", "#DADAAE", "#2EA7E7", "#9D4FA8","#A371C8", "#B5C3C7", "#299C2B", "#725E4F", "#F82C21"];
-		this.randomIndex = Math.round(Math.random() * (this.color.length -1));
-		this.randomColor = this.color[this.randomIndex];
 		this.deletingMessage = false;
-		this.username = 'ad';
 		this.chatGroup = [];
 		this.currentRoom = '';
 
@@ -89,11 +92,14 @@
 
 		this.on('update', function() {
 			//--------always scroll to the bottom when new messages come------------//
-			if(!that.deletingMessage) {
-				var chatLog = this.refs.chatLog;
-				chatLog.scrollTop = chatLog.scrollHeight;
+
+			if(!!!that.user) {
+				if(!that.deletingMessage) {
+					var chatLog = this.refs.chatLog;
+					chatLog.scrollTop = chatLog.scrollHeight;
+				}
+				that.deletingMessage = false;
 			}
-			that.deletingMessage = false;
 		})
 
 
@@ -115,8 +121,9 @@
 
 
 		//-<<<<<<<<<-[[[[[[ method2 ]]]]]-->>>>>>>--------obtain data one by one
+		this.on('mount', function() {
 
-		if(this.user) {
+			
 
 			messagesRef.on('value', function(e) {
 				var roomData = e.val();
@@ -132,8 +139,12 @@
 					})
 				}
 				that.update();
+				console.log(that.user)
 			})
-		}
+		
+		})
+
+
 
 			// messagesRef.child(that.currentRoom).on('child_added', function(e) {
 			// 	var data = e.val();
@@ -177,13 +188,14 @@
 			if(this.refs.messageInput.value !== '') {
 
 				var id = messagesRef.child(this.currentRoom.roomKey).child('message').push().key;
-				msg.author = this.username;				//record the author
+				msg.author = this.user.displayName;				//record the author
 				var time = moment().format('LTS');		
 				msg.time = time;						//record the time
-				msg.color = this.randomColor;			//record the color
 				msg.up = 0;								//record the thumbs-up
 				msg.down = 0;							//record the thumbs-down
 				msg.id = id;
+				msg.userProfile = this.user.photoURL;
+				msg.uid = this.user.uid;
 
 				messagesRef.child(this.currentRoom.roomKey).child('message').child(id).set(msg);
 				this.clearInput();
@@ -224,7 +236,30 @@
 			that.update();
 		}
 		
+
+		logOut() {
+			firebase.auth().signOut().then(function () {
+						// Sign-out successful.
+					}).catch(function (error) {
+						// An error happened.
+					});
+		}
+
+		firebase.auth().onAuthStateChanged(function (userObj) {
+			that.user = firebase.auth().currentUser;
+			that.parent.update();
+		})
+
 	</script>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -298,7 +333,7 @@
 		}
 
 		.chatLog {
-			/* padding: 1em; */
+			padding: 0 10px;
 			margin-bottom: 3px;
 			height: 550px;
 			overflow: auto;
@@ -439,6 +474,17 @@
 		}
 		.window-tool span:nth-child(3) {
 			background: #3ECB51;
+		}
+
+		.user-profile {
+			padding: 48px 0;
+			width: 44px;
+			height: 44px;
+			margin: 0 auto;
+		}
+
+		.user-profile img {
+			width: 100%;
 		}
 	</style>
 </app>

@@ -1,43 +1,51 @@
 <message>
 	<div class="clearfix">
-		<div class={message-wrap: true, float-right: msg.author === `${this.author}`} ref="messageWrap">
-			<span class="name" style={"background: " + msg.color +";"}>{msg.author} :</span>
-			<div class={message-content: true, float-left: msg.author === `${this.author}`, float-none: msg.author !== `${this.author}`}>
-				{ msg.message }
-				<br>
-				<span class="time">{msg.time}</span>
-				<div class="status" show= {showStatus}>
-					<div class="status-inner-wrapper">
-						<span class="up">
-							<i class="fa fa-thumbs-o-up" onclick={thumbsUp}></i>
-							{msg.up}
-						</span>
-						<span class="down">
-							<i class="fa fa-thumbs-o-down" onclick={thumbsDown}></i>
-							 {msg.down}
-						</span>
-						<span class="delete">
-							<i class="fa fa-trash-o" onclick={delete}></i>
-						</span>
+		<div class={message-wrap: true, float-right: msg.uid === `${this.uid}`} ref="messageWrap">
+			<div class={userProfile: true, float-right: msg.uid === `${this.uid}`}>
+				<img src={msg.userProfile} alt="" class="profileImage">
+			</div>
+			<div class={tempo: true, float-left: msg.uid === `${this.uid}`, float-none: msg.uid !== `${this.uid}`}>
+				<div class={message-content: true, float-left: msg.uid === `${this.uid}`, float-none: msg.uid !== `${this.uid}`}>
+					{ msg.message }
+					<br>
+					<span class="time">{msg.time}</span>
+					<div class="status" show= {showStatus}>
+						<div class="status-inner-wrapper">
+							<span class="up" if={msg.uid !== this.parent.user.uid}>
+								<i class="fa fa-thumbs-o-up" onclick={thumbsUp}></i>
+								{msg.up}
+							</span>
+							<span class="down" if={msg.uid !== this.parent.user.uid}>
+								<i class="fa fa-thumbs-o-down" onclick={thumbsDown}></i>
+								 {msg.down}
+							</span>
+							<span class="delete" if={msg.uid === this.parent.user.uid}>
+								<i class="fa fa-trash-o" onclick={delete}></i>
+							</span>
+						</div>
 					</div>
 				</div>
+				<span class="name">{msg.author}</span>
 			</div>
 		</div>
 	</div>
 
 	<script>
 		var that = this;
-		this.author = this.parent.username;
+		this.author = this.parent.user.displayName;
+		this.uid = this.parent.user.uid;
 		this.showStatus = false;
 
 
 		//Manipulate the DOM to show and hide the icon-------------------
 		this.on('mount', function() {
 			this.refs.messageWrap.addEventListener('mouseover', function(event) {
-				event.currentTarget.childNodes[3].childNodes[5].style.display = "block";
+				event.currentTarget.childNodes[3].childNodes[1].childNodes[5].style.display = "block";
+				// event.currentTarget.childNodes[5].childNodes[5].style.display = "block";
 			})
 			this.refs.messageWrap.addEventListener('mouseout', function(event) {
-				event.currentTarget.childNodes[3].childNodes[5].style.display = "none";
+				event.currentTarget.childNodes[3].childNodes[1].childNodes[5].style.display = "none";
+				// event.currentTarget.childNodes[5].childNodes[5].style.display = "none";
 			})
 
 			var messageWraps = document.querySelectorAll('.message-wrap');
@@ -78,6 +86,15 @@
 
 	</script>
 
+
+
+
+
+
+
+
+
+
 	<style>
 		:scope {
 			display: block;
@@ -87,11 +104,35 @@
 			margin-bottom: 1em;
 		}
 
-		.name {
-			font-size: 0.8em;
-			background: #F9C968;
-			padding: 2px 7px;
-			border-radius: 2px;
+		.userProfile {
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+		}
+		
+		.userProfile > .profileImage {
+			width: 100%;
+			border-radius: 1px;
+		}
+
+
+		.tempo.float-none {
+			display: inline-block;
+		}
+
+		.tempo .name {
+			position: absolute;
+			top: -10px;
+			left: 10px;
+			top: -20px;
+			background: none;
+			color: #B2B2B2;
+			font-size: 0.7em;
+		}
+
+		.tempo.float-left .name {
+			text-align: right;
+			right: 10px;
 		}
 
 		.time {
@@ -129,6 +170,7 @@
 
 		.message-content.float-left {
 			background-color: #A5E369;
+			margin-bottom: 25px;
 		}
 
 		.message-content.float-left:after {
@@ -180,5 +222,12 @@
 		.down i, .up i, .delete i {
 			cursor: pointer;
 		}
+
+		.tempo {
+			margin: 0;
+			position: relative;
+		}
+
+
 	</style>
 </message>
