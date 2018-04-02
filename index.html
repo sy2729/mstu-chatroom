@@ -9,7 +9,8 @@
 		<style>
 		h1,h2,h3,h4,h5,h6 {padding: 0;margin: 0;}
 		body {
-			background-image: #ddd;
+			/* background: #aaa; */
+			font-family: Helvetica Neue,Helvetica,Hiragino Sans GB,Microsoft YaHei;
 		}
 		* {
 			font-family: Helvetica, sans-serif;
@@ -36,6 +37,7 @@
 	<script src="tags/app.tag" type="riot/tag"></script>
 	<script src="tags/message.tag" type="riot/tag"></script>
 	<script src="tags/addRoom.tag" type="riot/tag"></script>
+	<script src="tags/beforeLogin.tag" type="riot/tag"></script>
 
 	<!-- I saved the libraries locally, so as not to hit the CDN fetch limit during testing. -->
 	<script src="js/riot+compiler.js"></script>
@@ -65,6 +67,8 @@
 		// Initialize Riot
 		riot.mount('*');
 
+	</script>
+	<script src="https://apis.google.com/js/platform.js" async defer>
 	</script>
 </body>
 </html>

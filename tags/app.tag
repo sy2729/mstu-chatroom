@@ -1,53 +1,55 @@
 <app>
-
-	<h2 style="text-align:center; margin: 15px 0;">Welcome to a MSTU ChatRoom</h2>
-
-	<addRoom if={addActive}></addRoom>
-
-	<div class="wrapper">
-		<div class="user-panel">
-			<div class="window-tool">
-				<span></span>
-				<span></span>
-				<span></span>
-			</div>
-		</div>
-		<div class="contact">
-			<div class="navbar">
-				<input type="text" placeholder="Search" class="search" onkeyup ={searchTriggered} ref = "search">
-				<button class="addRoom" onclick={addRoom}>+</button>
-			</div>
-			<div class="chatGroup-wrap">
-				<div each={i in chatGroup} class="chatGroup" onclick={changeRoom} id={groupHighlight: i.roomKey === currentRoom.roomKey} ref = 'chatGroup'>
-					<div class="groupProfile">
-						<img src="http://via.placeholder.com/40x40" alt="profile">
-					</div>
-					<div class="headingWrap">
-						<span>
-							{ i.roomName }
-						</span>
-						<span class="groupMessage-preview">
-							{ i.message? i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].message:undefined || 'no messages for now'}
-						</span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="chat-wrap">
-			<div class="chatLog" ref="chatLog">
-				<div class="chatHeading">
-					<h3 class="roomName">{currentRoom.roomName}</h3>
-				</div>
-				<!-- Messages go here: -->
-				<message each={ msg in currentRoom.message }></message>
-			</div>
-			<div class="animationBox">
+	<beforeLogin if = { !user }></beforeLogin>
+	<div class="main" if = { user }>
+		<h2 style="text-align:center; margin: 15px 0;">Welcome to a MSTU ChatRoom</h2>
 	
+		<addRoom if={addActive}></addRoom>
+	
+		<div class="wrapper">
+			<div class="user-panel">
+				<div class="window-tool">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
 			</div>
-			<div class="bottom">
-				<span class="user" style={"background: " + randomColor +";"}>{this.username || test}</span>
-				<input type="text" ref="messageInput" onkeypress={ sendMsg } placeholder="Enter Message">
-				<button type="button" onclick={ sendMsg } class="send">SEND</button>
+			<div class="contact">
+				<div class="navbar">
+					<input type="text" placeholder="Search" class="search" onkeyup ={searchTriggered} ref = "search">
+					<button class="addRoom" onclick={addRoom}>+</button>
+				</div>
+				<div class="chatGroup-wrap">
+					<div each={i in chatGroup} class="chatGroup" onclick={changeRoom} id={groupHighlight: i.roomKey === currentRoom.roomKey} ref = 'chatGroup'>
+						<div class="groupProfile">
+							<img src="http://via.placeholder.com/40x40" alt="profile">
+						</div>
+						<div class="headingWrap">
+							<span>
+								{ i.roomName }
+							</span>
+							<span class="groupMessage-preview">
+								{ i.message? i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].author +` : ` + i.message[Object.keys(i.message)[Object.keys(i.message).length - 1]].message:undefined || 'no messages for now'}
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="chat-wrap">
+				<div class="chatLog" ref="chatLog">
+					<div class="chatHeading">
+						<h3 class="roomName">{currentRoom.roomName}</h3>
+					</div>
+					<!-- Messages go here: -->
+					<message each={ msg in currentRoom.message }></message>
+				</div>
+				<div class="animationBox">
+		
+				</div>
+				<div class="bottom">
+					<span class="user" style={"background: " + randomColor +";"}>{this.username || test}</span>
+					<input type="text" ref="messageInput" onkeypress={ sendMsg } placeholder="Enter Message">
+					<button type="button" onclick={ sendMsg } class="send">SEND</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -58,29 +60,32 @@
 		this.randomIndex = Math.round(Math.random() * (this.color.length -1));
 		this.randomColor = this.color[this.randomIndex];
 		this.deletingMessage = false;
-		this.username = '';
+		this.username = 'ad';
 		this.chatGroup = [];
 		this.currentRoom = '';
 
-		this.on('mount', function () {
+		this.user = false;
 
-			var askName = function() {
-				that.username = prompt("Please enter your name", );
-				//--------make sure there must be a name------------//
-				  if (that.username === "") {
-					// user pressed OK, but the input field was empty
-					askName();
-				} else if (that.username) {
-					return;
-				} else {
-					// user hit cancel
-					askName();
-				}
 
-			}
-			askName();
+		// this.on('mount', function () {
 
-		})
+		// 	var askName = function() {
+		// 		that.username = prompt("Please enter your name", );
+		// 		//--------make sure there must be a name------------//
+		// 		  if (that.username === "") {
+		// 			// user pressed OK, but the input field was empty
+		// 			askName();
+		// 		} else if (that.username) {
+		// 			return;
+		// 		} else {
+		// 			// user hit cancel
+		// 			askName();
+		// 		}
+
+		// 	}
+		// 	askName();
+
+		// })
 
 		this.on('update', function() {
 			//--------always scroll to the bottom when new messages come------------//
@@ -110,21 +115,25 @@
 
 
 		//-<<<<<<<<<-[[[[[[ method2 ]]]]]-->>>>>>>--------obtain data one by one
-		messagesRef.on('value', function(e) {
-			var roomData = e.val();
-			that.chatGroup  = [];
-			for(roomName in roomData) {
-				that.chatGroup.push(roomData[roomName])
-			}
-			if(that.currentRoom === '') {
-				that.currentRoom = that.chatGroup[0];
-			}else{
-				that.currentRoom = that.chatGroup.find(function(each){
-					return each.roomKey === that.currentRoom.roomKey;
-				})
-			}
-			that.update();
-		})
+
+		if(this.user) {
+
+			messagesRef.on('value', function(e) {
+				var roomData = e.val();
+				that.chatGroup  = [];
+				for(roomName in roomData) {
+					that.chatGroup.push(roomData[roomName])
+				}
+				if(that.currentRoom === '') {
+					that.currentRoom = that.chatGroup[0];
+				}else{
+					that.currentRoom = that.chatGroup.find(function(each){
+						return each.roomKey === that.currentRoom.roomKey;
+					})
+				}
+				that.update();
+			})
+		}
 
 			// messagesRef.child(that.currentRoom).on('child_added', function(e) {
 			// 	var data = e.val();
