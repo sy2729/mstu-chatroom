@@ -6,7 +6,7 @@
     
     <div class="login">
       <figure class="logPic">
-        <img src="./../img/wechat.png" alt="">
+        <img src="https://res.cloudinary.com/shuaiyuan/image/upload/v1522706858/wechat_dgqu3r.png" alt="">
       </figure>
 
       <p class="title">
@@ -69,7 +69,7 @@
       left: 0;
       bottom: 0;
       right: 0;
-      background: url("./../img/bg.jpg");
+      background: url("https://res.cloudinary.com/shuaiyuan/image/upload/v1522706858/bg_bcqs9l.jpg");
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
