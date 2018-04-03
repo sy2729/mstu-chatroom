@@ -89,6 +89,17 @@
       margin: auto;
       box-sizing: border-box;
       text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      animation: breath 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes breath {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.02);
+      }
     }
 
     .main > .login > .logPic {
@@ -100,7 +111,7 @@
     .main > .login > .title {
       text-align: center;
       font-size: 20px;
-      color: #353535;
+      color: #fff;
     }
     
     .main > .login > .signIn {
@@ -112,6 +123,8 @@
       padding: 10px 30px 10px 20px;
       margin-top: 20px;
       transition: all .4s ease-in-out;
+      color: #fff;
+      background: transparent;
     }
     
     .main > .login > .signIn:after {
@@ -177,7 +190,7 @@
       right: 0;
       margin: 0 auto;
       font-size: 0.8em;
-      color: #888888;
+      color: #E6E6E6;
 
     }
 
